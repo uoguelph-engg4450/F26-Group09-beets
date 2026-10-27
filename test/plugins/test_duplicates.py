@@ -3,6 +3,7 @@ import pytest
 from beets.test.helper import IOMixin, PluginMixin, TestHelper
 from beetsplug.duplicates import DuplicatesPlugin
 
+
 class TestDuplicatesPlugin(PluginMixin, TestHelper, IOMixin):
     plugin = "duplicates"
 
@@ -68,7 +69,8 @@ class TestDuplicatesPlugin(PluginMixin, TestHelper, IOMixin):
         assert out.endswith("5")
 
     def test_order_with_missing_tiebreak_field(self):
-            """Regression test for #6227: using a field for _order() that doesn't exist shouldn't crash the program."""
+            """Regression test for #6227: using a field for _order() that doesn't exist
+            shouldn't crash the program."""
 
             song1 = self.create_item(title="Song", bitrate=128000)
             song2 = self.create_item(title="Song", bitrate=320000)

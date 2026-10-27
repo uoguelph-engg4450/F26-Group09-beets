@@ -18,6 +18,8 @@ Bug fixes
 
 - Add ``alternatives.item_updated`` to the typed event list so
   :doc:`plugins/hook` can listen to it. :bug:`7036`
+- :doc:`beetsplug/duplicates`: Program doesn't crash anymore when given an
+  unknown field for the tiebreaker. :bug:`6227`
 
 ..
     For plugin developers
