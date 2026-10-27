@@ -495,7 +495,6 @@ class MusiXmatch(Backend):
             return None
         return Lyrics(lyrics, self.__class__.name, url)
 
-
 def apply_transforms(html: str, methods: Iterable[HtmlTransformer]) -> str:
     for method in methods:
         html = method(html)
