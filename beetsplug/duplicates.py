@@ -336,12 +336,16 @@ class DuplicatesPlugin(BeetsPlugin):
 
         sort = partial(sorted, reverse=True)
         if tiebreak and kind in tiebreak.keys():
+
             def tiebreak_key(obj: AlbumOrItem) -> tuple[tuple[bool, Any], ...]:
                 key = []
                 for field in tiebreak[kind]:
                     value = obj.get(field)
-                    key.append((value is not None, value if value is not None else 0))
+                    key.append(
+                        (value is not None, value if value is not None else 0)
+                    )
                 return tuple(key)
+
             return sort(objs, key=tiebreak_key)
         if kind == "items":
 

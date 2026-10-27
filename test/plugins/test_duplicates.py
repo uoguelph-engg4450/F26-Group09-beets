@@ -69,15 +69,15 @@ class TestDuplicatesPlugin(PluginMixin, TestHelper, IOMixin):
         assert out.endswith("5")
 
     def test_order_with_missing_tiebreak_field(self):
-            """Regression test for #6227: using a field for _order() that doesn't exist
-            shouldn't crash the program."""
+        """Regression test for #6227: using a field for _order() that doesn't exist
+        shouldn't crash the program."""
 
-            song1 = self.create_item(title="Song", bitrate=128000)
-            song2 = self.create_item(title="Song", bitrate=320000)
+        song1 = self.create_item(title="Song", bitrate=128000)
+        song2 = self.create_item(title="Song", bitrate=320000)
 
-            tiebreak = {"items": ["lossless", "bitrate"]}
+        tiebreak = {"items": ["lossless", "bitrate"]}
 
-            plugin = DuplicatesPlugin()
-            result = plugin._order([song1, song2], tiebreak)
+        plugin = DuplicatesPlugin()
+        result = plugin._order([song1, song2], tiebreak)
 
-            assert result == [song2, song1]
+        assert result == [song2, song1]
