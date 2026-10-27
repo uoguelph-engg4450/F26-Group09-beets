@@ -494,6 +494,35 @@ class TestGoogleLyrics(LyricsBackendTest):
         assert result
         assert PHRASE_BY_TITLE["Beets song"] in result
 
+    def test_redirect_response_is_not_accepted_as_lyrics(
+            self, backend, requests_mock, monkeypatch
+    ):
+        from beetsplug.lyrics import SearchResult
+
+        monkeypatch.setattr(type(backend), "ignored_domains", set())
+
+        url = "https://www.azlyrics.com/lyrics/test/track.html"
+
+        requests_mock.get(
+            url,
+            status_code=302,
+            headers={"Location": "https://www.azlyrics.com/captcha"},
+            text="<html><body><p>302 Found</p></body></html>",
+        )
+
+        monkeypatch.setattr(
+            backend,
+            "get_results",
+            lambda *args: iter(
+                [SearchResult("Test Artist", "Test Track", url)]
+            ),
+        )
+
+        result = backend.fetch("Test Artist", "Test Track")
+
+        assert result is None
+        assert "www.azlyrics.com" in backend.ignored_domains
+
     @pytest.mark.parametrize(
         "url_title, expected_artist, expected_title",
         [
