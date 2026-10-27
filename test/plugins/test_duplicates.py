@@ -81,3 +81,19 @@ class TestDuplicatesPlugin(PluginMixin, TestHelper, IOMixin):
         result = plugin._order([song1, song2], tiebreak)
 
         assert result == [song2, song1]
+
+    def test_order_with_mixed_present_and_missing_tiebreak_fields(self):
+        """Handle a tiebreak field present on some items but missing on others."""
+        missing = self.create_item(title="Song", bitrate=320000)
+        present_low = self.create_item(title="Song", bitrate=128000)
+        present_high = self.create_item(title="Song", bitrate=256000)
+
+        present_low["custom_rank"] = 0
+        present_high["custom_rank"] = 0
+
+        tiebreak = {"items": ["custom_rank", "bitrate"]}
+        plugin = DuplicatesPlugin()
+
+        result = plugin._order([missing, present_low, present_high], tiebreak)
+
+        assert result == [present_high, present_low, missing]
