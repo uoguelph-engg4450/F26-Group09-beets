@@ -1,6 +1,7 @@
 import pytest
 
 from beets.test.helper import IOMixin, PluginMixin, TestHelper
+from beetsplug.duplicates import DuplicatesPlugin
 
 
 class TestDuplicatesPlugin(PluginMixin, TestHelper, IOMixin):
@@ -66,3 +67,17 @@ class TestDuplicatesPlugin(PluginMixin, TestHelper, IOMixin):
 
         assert str(self.dup_item.filepath) in out
         assert out.endswith("5")
+
+    def test_order_with_missing_tiebreak_field(self):
+        """Regression test for #6227: using a field for _order() that doesn't exist
+        shouldn't crash the program."""
+
+        song1 = self.create_item(title="Song", bitrate=128000)
+        song2 = self.create_item(title="Song", bitrate=320000)
+
+        tiebreak = {"items": ["lossless", "bitrate"]}
+
+        plugin = DuplicatesPlugin()
+        result = plugin._order([song1, song2], tiebreak)
+
+        assert result == [song2, song1]
