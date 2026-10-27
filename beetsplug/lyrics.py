@@ -209,6 +209,10 @@ class LyricsRequestHandler(RequestHandler):
         url = self.format_url(url, params)
         self.debug("Fetching HTML from {}", url)
         r = self.get(url, **kwargs)
+
+        if error := self.status_to_error(r.status_code):
+            raise error(response=r)
+
         r.encoding = None
         return r.text
 
