@@ -495,7 +495,7 @@ class TestGoogleLyrics(LyricsBackendTest):
         assert PHRASE_BY_TITLE["Beets song"] in result
 
     def test_redirect_response_is_not_accepted_as_lyrics(
-            self, backend, requests_mock, monkeypatch
+        self, backend, requests_mock, monkeypatch
     ):
         from beetsplug.lyrics import SearchResult
 
