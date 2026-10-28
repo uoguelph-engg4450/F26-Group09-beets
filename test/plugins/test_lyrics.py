@@ -523,6 +523,36 @@ class TestGoogleLyrics(LyricsBackendTest):
         assert result is None
         assert "www.azlyrics.com" in backend.ignored_domains
 
+    @pytest.mark.parametrize("status_code", [301, 302, 303, 307, 308])
+    def test_multiple_redirect_status_codes_are_not_accepted_as_lyrics(
+        self, backend, requests_mock, monkeypatch, status_code
+    ):
+        """Reject redirect responses instead of treating them as lyrics."""
+        from beetsplug.lyrics import SearchResult
+
+        monkeypatch.setattr(type(backend), "ignored_domains", set())
+
+        url = "https://www.azlyrics.com/lyrics/test/track.html"
+        requests_mock.get(
+            url,
+            status_code=status_code,
+            headers={"Location": "https://www.azlyrics.com/captcha"},
+            text=f"<html><body><p>{status_code} Redirect</p></body></html>",
+        )
+
+        monkeypatch.setattr(
+            backend,
+            "get_results",
+            lambda *args: iter(
+                [SearchResult("Test Artist", "Test Track", url)]
+            ),
+        )
+
+        result = backend.fetch("Test Artist", "Test Track")
+
+        assert result is None
+        assert "www.azlyrics.com" in backend.ignored_domains
+
     @pytest.mark.parametrize(
         "url_title, expected_artist, expected_title",
         [
